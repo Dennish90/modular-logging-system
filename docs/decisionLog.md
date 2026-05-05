@@ -25,3 +25,28 @@ The format is less flexible than JSON and requires clear rules for separator han
 
 ### Reflection
 This choice prioritizes implementation simplicity and analyzer compatibility over maximum flexibility.
+
+## Decision – Convenience methods for common log levels
+
+### Context
+The logger supports log levels through a `LogLevel` enum. However, requiring users to write `Write(LogLevel::Info, "...")` for every common log message makes the API slightly verbose.
+
+---
+
+### Decision - 002
+The logger provides convenience methods for the three(Might expand) default log levels:
+
+- `Info(message)`
+- `Warning(message)`
+- `Error(message)`
+
+The generic `Write(LogLevel level, message)` method remains available for flexibility.
+
+### Reasoning
+This keeps common logging simple while still allowing the logger to support additional log levels in the future.
+
+### Consequences
+The logger API becomes easier to use for common cases, while custom or extended log levels still require the more explicit `Write(...)` method.
+
+---
+
