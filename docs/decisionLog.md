@@ -26,14 +26,14 @@ The format is less flexible than JSON and requires clear rules for separator han
 ### Reflection
 This choice prioritizes implementation simplicity and analyzer compatibility over maximum flexibility.
 
-## Decision – Convenience methods for common log levels
-
-### Context
+### Context **Status:** Superseded by Decision 003.
 The logger supports log levels through a `LogLevel` enum. However, requiring users to write `Write(LogLevel::Info, "...")` for every common log message makes the API slightly verbose.
 
 ---
 
-### Decision - 002
+### Decision - 002 – Add convenience methods for common log levels
+**Status:** Partially superseded by Decision 003.
+
 The logger provides convenience methods for the three(Might expand) default log levels:
 
 - `Info(message)`
@@ -50,3 +50,17 @@ The logger API becomes easier to use for common cases, while custom or extended 
 
 ---
 
+### Decision 003 - Use string-based log levels
+**Status:** Active. Replaces the enum-based log level design from earlier decisions.
+
+The logger will no longer use an enum for log levels. Instead, the generic `Write()` function will accept a string as the level parameter.
+
+### Reasoning
+The logger provides helper functions for the most common log levels, such as `Info(message)`, `Warning(message)` and `Error(message)`. This makes common logging quick and convenient.
+
+Using a string parameter for `Write()` also allows users to define their own custom log levels without modifying the logger source code.
+
+### Consequences
+Accepting any string as a log level makes the logger more flexible, but it also removes some type safety. If the user writes a log level manually, spelling mistakes will not be caught by the compiler.
+
+This risk is reduced by providing helper functions for the standard log levels. Users who need custom log levels should define them as string constants and reuse those constants when calling `Write()`.

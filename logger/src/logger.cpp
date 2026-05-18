@@ -18,11 +18,11 @@ Logger::Logger(const std::string& filePath)
 
     else
     {
-        Logger::Write(LogLevel::Info, "---- [LOGGER SESSION STARTED] ----");
+        Logger::Write("INFO", "---- [LOGGER SESSION STARTED] ----", "LOGGER");
     }
 }
 
-void Logger::Write(LogLevel level, const std::string& message, const std::string& category)
+void Logger::Write(std::string level, const std::string& message, const std::string& category)
 {
     if (!_logFile.is_open())
     {
@@ -31,7 +31,7 @@ void Logger::Write(LogLevel level, const std::string& message, const std::string
 
     _logFile << GetCurrentTimestamp()
              << " | "
-             << logLevelToString(level) 
+             << level 
              << " | " 
              << category 
              << " | "
@@ -39,38 +39,45 @@ void Logger::Write(LogLevel level, const std::string& message, const std::string
              << '\n';
 }
 
+void Logger::Trace(const std::string& message, const std::string& category)
+{
+    if(_minimumLogLevel > 0) return;
+    Write("TRACE", message, category);
+}
+void Logger::Debug(const std::string& message, const std::string& category)
+{
+    if(_minimumLogLevel > 1) return;
+    Write("DEBUG", message, category);
+}
+
 void Logger::Info(const std::string& message, const std::string& category)
 {
-    Write(LogLevel::Info, message, category);
+    if(_minimumLogLevel > 2) return;
+    Write("INFO", message, category);
 }
 
 void Logger::Warning(const std::string& message, const std::string& category)
 {
-    Write(LogLevel::Warning, message, category);
+    if(_minimumLogLevel > 3) return;
+    Write("WARNING", message, category);
 }
 
 void Logger::Error(const std::string& message, const std::string& category)
 {
-    Write(LogLevel::Error, message, category);
+    if(_minimumLogLevel > 4) return;
+    Write("ERROR", message, category);
 }
 
-std::string Logger::logLevelToString(LogLevel level) const
+void Logger::Critical(const std::string& message, const std::string& category)
 {
-    switch (level)
-    {
-        case LogLevel::Info:
-            return "INFO";
-            break;
-        case LogLevel::Warning:
-            return "WARNING";
-            break;
-        case LogLevel::Error:
-            return "ERROR";
-            break;
-        default:
-            return "UNKNOWN";
-            break;
-    }
+    Write("CRITICAL", message, category);
+}
+
+void Logger::setMinimumLogLevel(int level)
+{
+    if(level > 5) _minimumLogLevel = 5;
+    else if(level < 0) _minimumLogLevel = 0;
+    else _minimumLogLevel = level;
 }
 
 std::string Logger::GetCurrentTimestamp() const

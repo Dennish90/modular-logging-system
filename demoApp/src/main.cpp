@@ -1,17 +1,17 @@
-#include <logger/logger.h>
+#include "logger/logger.h"
 
 int main()
 {
-    Logger logger("demoLog.txt");
+    Logger logger("demoLog2.txt");
 
-    logger.Write(LogLevel::Info, "Application started");
-    logger.Write(LogLevel::Info, "This is the first logger prototype");
-    logger.Write(LogLevel::Info, "Application finished");
+    logger.Write("DEBUG", "Application started", "Important");
+    logger.Write("DEBUG", "This is the first logger prototype");
+    logger.Write("SYSTEM", "Application finished");
 
     logger.Info("Testing new function");
-    logger.Error("Could not open file");
 
+    logger.Info("Trying to start application");
     logger.Info("Testing category");
-    logger.Warning("Too cool for shool", "Coolness");
+
     return 0;
 }
