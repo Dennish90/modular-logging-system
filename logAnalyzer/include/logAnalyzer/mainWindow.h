@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -17,6 +18,27 @@ public:
 
 private:
     void SetupLogTable();
+
+    void OnOpenFileButtonClicked();
+    void OnBrowseButtonClicked();
+    
+    void LoadLogFile(const QString& filePath);
+    bool TryParseLogLine(
+        const QString& line,
+        QString& timestamp,
+        QString& level,
+        QString& category,
+        QString& message
+    );
+
+    void AddLogEntryToTable(
+        const QString& timestamp,
+        const QString& level,
+        const QString& category,
+        const QString& message
+    );
+
+    void UpdateEntryCount(int shownEntries, int totalEntries);
 
     Ui::MainWindow* _ui;
 };

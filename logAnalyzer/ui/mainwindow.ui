@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>20</y>
+      <y>10</y>
       <width>931</width>
       <height>31</height>
      </rect>
@@ -53,7 +53,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>110</y>
+      <y>50</y>
       <width>521</width>
       <height>31</height>
      </rect>
@@ -179,7 +179,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>620</y>
+      <y>660</y>
       <width>931</width>
       <height>22</height>
      </rect>
@@ -206,7 +206,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="lblEntryCount">
        <property name="text">
         <string>Showing 0 / 0 log entries</string>
        </property>
@@ -218,9 +218,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>150</y>
+      <y>90</y>
       <width>931</width>
-      <height>471</height>
+      <height>571</height>
      </rect>
     </property>
     <property name="alternatingRowColors">
@@ -237,22 +237,6 @@
     <column/>
     <column/>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>965</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuAly">
-    <property name="title">
-     <string>Aly</string>
-    </property>
-   </widget>
-   <addaction name="menuAly"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

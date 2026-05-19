@@ -2,7 +2,7 @@
 
 int main()
 {
-    Logger logger("demoLog2.txt");
+    Logger logger("demoLog2.log");
 
     logger.Write("DEBUG", "Application started", "Important");
     logger.Write("DEBUG", "This is the first logger prototype");
