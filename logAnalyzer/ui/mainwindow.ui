@@ -54,13 +54,13 @@
      <rect>
       <x>20</x>
       <y>50</y>
-      <width>521</width>
+      <width>931</width>
       <height>31</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="layoutLevelButtons">
      <item>
-      <widget class="QPushButton" name="btnCrit">
+      <widget class="QPushButton" name="btnCritical">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -98,7 +98,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnWarn">
+      <widget class="QPushButton" name="btnWarning">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -173,6 +173,29 @@
        </property>
       </widget>
      </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lnEdSearch">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Search logs...</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget_3">
@@ -218,9 +241,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>90</y>
+      <y>150</y>
       <width>931</width>
-      <height>571</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="alternatingRowColors">
@@ -236,6 +259,127 @@
     <column/>
     <column/>
     <column/>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_4">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>321</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="layoutTimeSearch">
+     <item>
+      <widget class="QLabel" name="lblTimeFilter">
+       <property name="text">
+        <string>Filter by time:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkEnableTimeFilter">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LayoutDirection::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTimeEdit" name="timeEditFrom">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTimeEdit" name="timeEditTo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="time">
+        <time>
+         <hour>23</hour>
+         <minute>59</minute>
+         <second>0</second>
+        </time>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_5">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>351</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="layoutDateSearch">
+     <item>
+      <widget class="QLabel" name="lblDateFilter">
+       <property name="text">
+        <string>Filter by date:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkEnableDateFilter">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LayoutDirection::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDateEdit" name="dateEdit"/>
+     </item>
+     <item>
+      <widget class="QDateEdit" name="dateEdit_2"/>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

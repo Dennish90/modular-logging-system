@@ -82,3 +82,22 @@ The project should therefore be configured with:
       -DCMAKE_MAKE_PROGRAM="C:\Qt\Tools\mingw1310_64\bin\mingw32-make.exe" ^
       -DCMAKE_PREFIX_PATH="C:\Qt\6.11.1\mingw_64" ^
       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+---
+
+## 2026-05-18
+
+### Work done
+- Added initial Qt Designer UI for Anly.
+- Implemented manual log file loading from a file path.
+- Added Browse button using QFileDialog.
+- Parsed pipe-separated log entries.
+- Displayed log entries in QTableWidget.
+- Added level filter buttons.
+- Added text search filter.
+- Updated entry count display.
+
+### Reflection
+The analyzer progressed faster than expected after the Qt build environment was stabilized. Qt Designer made it possible to build the UI layout quickly, while the C++ code focused on loading, parsing and filtering log entries.
+
+The current analyzer uses QTableWidget, which is suitable for the MVP. For larger log files, a future version may need QTableView with a custom model for better performance.

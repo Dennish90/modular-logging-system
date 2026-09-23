@@ -34,7 +34,7 @@ The logger supports log levels through a `LogLevel` enum. However, requiring use
 ### Decision - 002 – Add convenience methods for common log levels
 **Status:** Partially superseded by Decision 003.
 
-The logger provides convenience methods for the three(Might expand) default log levels:
+The logger provides convenience methods for the three(Will expand) default log levels:
 
 - `Info(message)`
 - `Warning(message)`

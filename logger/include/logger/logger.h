@@ -40,7 +40,10 @@ public:
      */
     void Write(std::string level, const std::string& message, const std::string& category = "General");
     /**
-     * @brief Writes an info-level log entry.
+     * @brief Writes a trace-level log entry.
+     *
+     * Trace entries are intended for very detailed diagnostic information,
+     * such as function flow, internal state checks or low-level execution details.
      *
      * If no category is provided, the default category "General" is used.
      *
@@ -48,7 +51,26 @@ public:
      * @param category Optional category or module name. Defaults to "General".
      */
     void Trace(const std::string& message, const std::string& category = "General");
+    /**
+     * @brief Writes a debug-level log entry.
+     *
+     * Debug entries are intended for information useful during development
+     * or troubleshooting, but less detailed than trace entries.
+     *
+     * If no category is provided, the default category "General" is used.
+     *
+     * @param message The message to write to the log file.
+     * @param category Optional category or module name. Defaults to "General".
+     */
     void Debug(const std::string& message, const std::string& category = "General");
+    /**
+     * @brief Writes an info-level log entry.
+     *
+     * If no category is provided, the default category "General" is used.
+     *
+     * @param message The message to write to the log file.
+     * @param category Optional category or module name. Defaults to "General".
+     */
     void Info(const std::string& message, const std::string& category = "General");
     /**
      * @brief Writes a warning-level log entry.
@@ -68,13 +90,23 @@ public:
      * @param category Optional category or module name. Defaults to "General".
      */
     void Error(const std::string& message, const std::string& category = "General");
+    /**
+     * @brief Writes a critical-level log entry.
+     *
+     * Critical entries are intended for severe errors where the application
+     * may not be able to continue safely or correctly.
+     *
+     * If no category is provided, the default category "General" is used.
+     *
+     * @param message The message to write to the log file.
+     * @param category Optional category or module name. Defaults to "General".
+     */
     void Critical(const std::string& message, const std::string& category = "General");
     
     void setMinimumLogLevel(int level);
     int stringToLogLevel(std::string& strLvl);
 
 private:
-    // 0 = INFO, 1 = WARNING, 2 = ERROR
     int _minimumLogLevel = 0;
     std::ofstream _logFile;
 

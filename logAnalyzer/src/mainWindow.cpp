@@ -9,6 +9,10 @@
 #include <QMessageBox>
 #include <QTableWidgetItem>
 #include <QTextStream>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QTimeEdit>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -16,9 +20,16 @@ MainWindow::MainWindow(QWidget* parent)
 {
     _ui->setupUi(this);
 
-    setWindowTitle("Anly");
+    setWindowTitle("Ally - Log Analyzer");
+
+    _ui->timeEditFrom->setDisplayFormat("HH:mm:ss");
+    _ui->timeEditTo->setDisplayFormat("HH:mm:ss");
+
+    _ui->timeEditFrom->setTime(QTime(0, 0, 0));
+    _ui->timeEditTo->setTime(QTime(23, 59, 59));
 
     SetupLogTable();
+    ConnectLevelFilterButtons();
 
     connect(
         _ui->btnOpenFile,
@@ -32,6 +43,34 @@ MainWindow::MainWindow(QWidget* parent)
         &QPushButton::clicked,
         this,
         &MainWindow::OnBrowseButtonClicked
+    );
+
+    connect(
+        _ui->lnEdSearch,
+        &QLineEdit::textChanged,
+        this,
+        &MainWindow::ApplyFilters
+    );
+
+    connect(
+        _ui->chkEnableTimeFilter,
+        &QCheckBox::toggled,
+        this,
+        &MainWindow::ApplyFilters
+        );
+
+    connect(
+        _ui->timeEditFrom,
+        &QTimeEdit::timeChanged,
+        this,
+        &MainWindow::ApplyFilters
+    );
+
+    connect(
+        _ui->timeEditTo,
+        &QTimeEdit::timeChanged,
+        this,
+        &MainWindow::ApplyFilters
     );
 }
 
@@ -154,16 +193,16 @@ void MainWindow::LoadLogFile(const QString& filePath)
     file.close();
 
     _ui->lblStatusText->setText("Loaded file: " + filePath);
-    UpdateEntryCount(parsedEntries, totalEntries);
+    ApplyFilters();
 }
 
-bool MainWindow::TryParseLogLine(
-    const QString& line,
-    QString& timestamp,
-    QString& level,
-    QString& category,
-    QString& message
-)
+    bool MainWindow::TryParseLogLine(
+        const QString& line,
+        QString& timestamp,
+        QString& level,
+        QString& category,
+        QString& message
+    )
 {
     const int firstSeparator = line.indexOf('|');
 
@@ -204,11 +243,11 @@ bool MainWindow::TryParseLogLine(
 }
 
 void MainWindow::AddLogEntryToTable(
-    const QString& timestamp,
-    const QString& level,
-    const QString& category,
-    const QString& message
-)
+        const QString& timestamp,
+        const QString& level,
+        const QString& category,
+        const QString& message
+    )
 {
     const int row = _ui->logTableWidget->rowCount();
 
@@ -229,4 +268,160 @@ void MainWindow::UpdateEntryCount(int shownEntries, int totalEntries)
         QString::number(totalEntries) +
         " log entries"
     );
+}
+
+void MainWindow::ConnectLevelFilterButtons()
+{
+    connect(_ui->btnTrace, &QPushButton::toggled, this, &MainWindow::ApplyFilters);
+    connect(_ui->btnDebug, &QPushButton::toggled, this, &MainWindow::ApplyFilters);
+    connect(_ui->btnInfo, &QPushButton::toggled, this, &MainWindow::ApplyFilters);
+    connect(_ui->btnWarning, &QPushButton::toggled, this, &MainWindow::ApplyFilters);
+    connect(_ui->btnError, &QPushButton::toggled, this, &MainWindow::ApplyFilters);
+    connect(_ui->btnCritical, &QPushButton::toggled, this, &MainWindow::ApplyFilters);
+}
+
+void MainWindow::ApplyFilters()
+{
+    int shownEntries = 0;
+    const int totalEntries = _ui->logTableWidget->rowCount();
+
+    for (int row = 0; row < totalEntries; row++)
+    {
+        QTableWidgetItem* levelItem = _ui->logTableWidget->item(row, 1);
+
+        if (levelItem == nullptr)
+        {
+            _ui->logTableWidget->setRowHidden(row, true);
+            continue;
+        }
+
+        const QString level = levelItem->text().trimmed();
+
+        const bool levelMatches = IsLevelEnabled(level);
+        const bool searchMatches = DoesRowMatchSearch(row);
+        const bool timeMatches = DoesRowMatchTimeFilter(row);
+
+        const bool shouldShow = levelMatches && searchMatches && timeMatches;
+
+        _ui->logTableWidget->setRowHidden(row, !shouldShow);
+
+        if (shouldShow)
+        {
+            shownEntries++;
+        }
+    }
+
+    UpdateEntryCount(shownEntries, totalEntries);
+}
+
+bool MainWindow::IsLevelEnabled(const QString& level) const
+{
+    if (level == "TRACE")
+    {
+        return _ui->btnTrace->isChecked();
+    }
+
+    if (level == "DEBUG")
+    {
+        return _ui->btnDebug->isChecked();
+    }
+
+    if (level == "INFO")
+    {
+        return _ui->btnInfo->isChecked();
+    }
+
+    if (level == "WARNING")
+    {
+        return _ui->btnWarning->isChecked();
+    }
+
+    if (level == "ERROR")
+    {
+        return _ui->btnError->isChecked();
+    }
+
+    if (level == "CRITICAL")
+    {
+        return _ui->btnCritical->isChecked();
+    }
+
+    return true;
+}
+
+bool MainWindow::DoesRowMatchTimeFilter(int row) const
+{
+    if (!_ui->chkEnableTimeFilter->isChecked())
+    {
+        return true;
+    }
+
+    QTableWidgetItem* timestampItem = _ui->logTableWidget->item(row, 0);
+
+    if (timestampItem == nullptr)
+    {
+        return false;
+    }
+
+    QTime rowTime;
+
+    if (!TryGetTimeFromTimestamp(timestampItem->text(), rowTime))
+    {
+        return false;
+    }
+
+    const int rowSeconds = QTime(0, 0, 0).secsTo(rowTime);
+    const int fromSeconds = QTime(0, 0, 0).secsTo(_ui->timeEditFrom->time());
+    const int toSeconds = QTime(0, 0, 0).secsTo(_ui->timeEditTo->time());
+
+    if (fromSeconds <= toSeconds)
+    {
+        return rowSeconds >= fromSeconds && rowSeconds <= toSeconds;
+    }
+
+    return rowSeconds >= fromSeconds || rowSeconds <= toSeconds;
+}
+
+bool MainWindow::TryGetTimeFromTimestamp(const QString& timestamp, QTime& time) const
+{
+    // Expected format:
+    // 2026-06-01 16:04:28.571
+
+    if (timestamp.length() < 19)
+    {
+        return false;
+    }
+
+    const QString timePart = timestamp.mid(11, 8);
+
+    time = QTime::fromString(timePart, "HH:mm:ss");
+
+    return time.isValid();
+}
+
+bool MainWindow::DoesRowMatchSearch(int row) const
+{
+    const QString searchText = _ui->lnEdSearch->text().trimmed();
+
+    if (searchText.isEmpty())
+    {
+        return true;
+    }
+
+    for (int column = 0; column < _ui->logTableWidget->columnCount(); column++)
+    {
+        QTableWidgetItem* item = _ui->logTableWidget->item(row, column);
+
+        if (item == nullptr)
+        {
+            continue;
+        }
+
+        if (item->text().contains(searchText, Qt::CaseInsensitive))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
