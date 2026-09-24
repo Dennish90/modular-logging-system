@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QTimeEdit>
+#include <QDate>
 #include <QDateEdit>
 
 MainWindow::MainWindow(QWidget* parent)
@@ -196,6 +197,9 @@ void MainWindow::LoadLogFile(const QString& filePath)
     int totalEntries = 0;
     int parsedEntries = 0;
 
+    QDate firstDate;
+    QDate lastDate;
+
     while (!inputStream.atEnd())
     {
         const QString line = inputStream.readLine();
@@ -217,11 +221,32 @@ void MainWindow::LoadLogFile(const QString& filePath)
             continue;
         }
 
+        QDate currentDate;
+
+        if (TryGetDateFromTimestamp(timestamp, currentDate))
+        {
+            if (!firstDate.isValid() || currentDate < firstDate)
+            {
+                firstDate = currentDate;
+            }
+
+            if (!lastDate.isValid() || currentDate > lastDate)
+            {
+                lastDate = currentDate;
+            }
+        }
+
         AddLogEntryToTable(timestamp, level, category, message);
         parsedEntries++;
     }
 
     file.close();
+
+    if (firstDate.isValid() && lastDate.isValid())
+    {
+        _ui->dateEditFrom->setDate(firstDate);
+        _ui->dateEditTo->setDate(lastDate);
+    }
 
     _ui->lblStatusText->setText("Loaded file: " + filePath);
     ApplyFilters();
