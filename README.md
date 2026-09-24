@@ -77,3 +77,8 @@ The file is created in the current working directory when the program is run.
 To find the generated log file:
 
     Get-ChildItem -Recurse demoLog.txt
+
+## Running the log analyzer during development
+
+$env:PATH = "C:\Qt\6.11.1\mingw_64\bin;$env:PATH"
+.\build\logAnalyzer\logAnalyzer.exe
