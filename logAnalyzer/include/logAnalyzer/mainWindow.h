@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QTime>
+#include <QDate>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -45,6 +46,8 @@ private:
     bool DoesRowMatchSearch(int row) const;
     bool DoesRowMatchTimeFilter(int row) const;
     bool TryGetTimeFromTimestamp(const QString& timestamp, QTime& time) const;
+    bool DoesRowMatchDateFilter(int row) const;
+    bool TryGetDateFromTimestamp(const QString& timestamp, QDate& date) const;
 
     void UpdateEntryCount(int shownEntries, int totalEntries);
 

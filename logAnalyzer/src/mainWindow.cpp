@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QTimeEdit>
+#include <QDateEdit>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -27,6 +28,15 @@ MainWindow::MainWindow(QWidget* parent)
 
     _ui->timeEditFrom->setTime(QTime(0, 0, 0));
     _ui->timeEditTo->setTime(QTime(23, 59, 59));
+
+    _ui->dateEditFrom->setDisplayFormat("yyyy-MM-dd");
+    _ui->dateEditTo->setDisplayFormat("yyyy-MM-dd");
+
+    _ui->dateEditFrom->setCalendarPopup(true);
+    _ui->dateEditTo->setCalendarPopup(true);
+
+    _ui->dateEditFrom->setDate(QDate(2000, 1, 1));
+    _ui->dateEditTo->setDate(QDate(2026, 6, 1));
 
     SetupLogTable();
     ConnectLevelFilterButtons();
@@ -69,6 +79,27 @@ MainWindow::MainWindow(QWidget* parent)
     connect(
         _ui->timeEditTo,
         &QTimeEdit::timeChanged,
+        this,
+        &MainWindow::ApplyFilters
+    );
+
+    connect(
+        _ui->chkEnableDateFilter,
+        &QCheckBox::toggled,
+        this,
+        &MainWindow::ApplyFilters
+    );
+
+    connect(
+        _ui->dateEditFrom,
+        &QDateEdit::dateChanged,
+        this,
+        &MainWindow::ApplyFilters
+    );
+
+    connect(
+        _ui->dateEditTo,
+        &QDateEdit::dateChanged,
         this,
         &MainWindow::ApplyFilters
     );
@@ -300,8 +331,9 @@ void MainWindow::ApplyFilters()
         const bool levelMatches = IsLevelEnabled(level);
         const bool searchMatches = DoesRowMatchSearch(row);
         const bool timeMatches = DoesRowMatchTimeFilter(row);
+        const bool dateMatches = DoesRowMatchDateFilter(row);
 
-        const bool shouldShow = levelMatches && searchMatches && timeMatches;
+        const bool shouldShow = levelMatches && searchMatches && timeMatches && dateMatches;
 
         _ui->logTableWidget->setRowHidden(row, !shouldShow);
 
@@ -397,6 +429,50 @@ bool MainWindow::TryGetTimeFromTimestamp(const QString& timestamp, QTime& time) 
     time = QTime::fromString(timePart, "HH:mm:ss");
 
     return time.isValid();
+}
+
+bool MainWindow::DoesRowMatchDateFilter(int row) const
+{
+    if (!_ui->chkEnableDateFilter->isChecked())
+    {
+        return true;
+    }
+
+    QTableWidgetItem* timestampItem = _ui->logTableWidget->item(row, 0);
+
+    if (timestampItem == nullptr)
+    {
+        return false;
+    }
+
+    QDate rowDate;
+
+    if (!TryGetDateFromTimestamp(timestampItem->text(), rowDate))
+    {
+        return false;
+    }
+
+    const QDate fromDate = _ui->dateEditFrom->date();
+    const QDate toDate = _ui->dateEditTo->date();
+
+    return rowDate >= fromDate && rowDate <= toDate;
+}
+
+bool MainWindow::TryGetDateFromTimestamp(const QString& timestamp, QDate& date) const
+{
+    // Expected format:
+    // 2026-06-01 16:04:28.571
+
+    if (timestamp.length() < 10)
+    {
+        return false;
+    }
+
+    const QString datePart = timestamp.left(10);
+
+    date = QDate::fromString(datePart, "yyyy-MM-dd");
+
+    return date.isValid();
 }
 
 bool MainWindow::DoesRowMatchSearch(int row) const
