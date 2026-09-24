@@ -103,12 +103,33 @@ public:
      */
     void Critical(const std::string& message, const std::string& category = "General");
     
-    void setMinimumLogLevel(int level);
-    int stringToLogLevel(std::string& strLvl);
+    /**
+     * @brief Sets the minimum log level that should be written.
+     *
+     * Log entries below the selected level are ignored by the standard
+     * log level helper functions.
+     *
+     * Level values:
+     * 0 = TRACE
+     * 1 = DEBUG
+     * 2 = INFO
+     * 3 = WARNING
+     * 4 = ERROR
+     * 5 = CRITICAL
+     *
+     * Values outside this range are clamped to the closest valid level.
+     *
+     * @param level Minimum log level as an integer from 0 to 5.
+     */
+    void SetMinimumLogLevel(int level);
+
+    int StringToLogLevel(std::string& strLvl);
 
 private:
     int _minimumLogLevel = 0;
     std::ofstream _logFile;
 
+    // Returns the current local timestamp using the log format:
+    // YYYY-MM-DD HH:MM:SS.mmm
     std::string GetCurrentTimestamp() const;
 };

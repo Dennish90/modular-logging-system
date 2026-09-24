@@ -197,6 +197,8 @@ void MainWindow::LoadLogFile(const QString& filePath)
     int totalEntries = 0;
     int parsedEntries = 0;
 
+    // Track the date range found in the file so the date filter can be
+    // initialized to the actual log contents.
     QDate firstDate;
     QDate lastDate;
 
@@ -242,6 +244,7 @@ void MainWindow::LoadLogFile(const QString& filePath)
 
     file.close();
 
+    // Initialize the date filter range to the earliest and latest parsed dates.
     if (firstDate.isValid() && lastDate.isValid())
     {
         _ui->dateEditFrom->setDate(firstDate);
@@ -252,13 +255,13 @@ void MainWindow::LoadLogFile(const QString& filePath)
     ApplyFilters();
 }
 
-    bool MainWindow::TryParseLogLine(
-        const QString& line,
-        QString& timestamp,
-        QString& level,
-        QString& category,
-        QString& message
-    )
+bool MainWindow::TryParseLogLine(
+    const QString& line,
+    QString& timestamp,
+    QString& level,
+    QString& category,
+    QString& message
+)
 {
     const int firstSeparator = line.indexOf('|');
 
@@ -299,11 +302,11 @@ void MainWindow::LoadLogFile(const QString& filePath)
 }
 
 void MainWindow::AddLogEntryToTable(
-        const QString& timestamp,
-        const QString& level,
-        const QString& category,
-        const QString& message
-    )
+    const QString& timestamp,
+    const QString& level,
+    const QString& category,
+    const QString& message
+)
 {
     const int row = _ui->logTableWidget->rowCount();
 
@@ -338,6 +341,9 @@ void MainWindow::ConnectLevelFilterButtons()
 
 void MainWindow::ApplyFilters()
 {
+    // All active filters are combined with AND logic.
+    // A row is shown only if it matches level, search, time and date filters.
+
     int shownEntries = 0;
     const int totalEntries = _ui->logTableWidget->rowCount();
 
@@ -441,8 +447,10 @@ bool MainWindow::DoesRowMatchTimeFilter(int row) const
 
 bool MainWindow::TryGetTimeFromTimestamp(const QString& timestamp, QTime& time) const
 {
-    // Expected format:
+    // Expected timestamp format:
     // 2026-06-01 16:04:28.571
+
+    // The UI filters on whole seconds, so milliseconds are ignored.
 
     if (timestamp.length() < 19)
     {
