@@ -73,7 +73,7 @@ void Logger::Critical(const std::string& message, const std::string& category)
     Write("CRITICAL", message, category);
 }
 
-void Logger::setMinimumLogLevel(int level)
+void Logger::SetMinimumLogLevel(int level)
 {
     if(level > 5) _minimumLogLevel = 5;
     else if(level < 0) _minimumLogLevel = 0;
@@ -87,12 +87,14 @@ std::string Logger::GetCurrentTimestamp() const
 
     std::tm localTime{};
 
+// Use platform-specific thread-safe local time conversion.
 #if defined(_WIN32)
     localtime_s(&localTime, &currentTime);
 #else
     localtime_r(&currentTime, &localTime);
 #endif
 
+    // Add milliseconds separately because std::put_time formats whole seconds.
     const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
         now.time_since_epoch()
     ) % 1000;
