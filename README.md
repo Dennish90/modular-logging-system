@@ -1,16 +1,45 @@
+# Modular Logging System
+
+A small C++ logging system with a demo application and a Qt-based log analyzer.
+
+The project consists of three parts:
+
+- `logger` - reusable C++ logging module
+- `demoApp` - example application that generates log files
+- `logAnalyzer` - Qt desktop application for viewing, searching and filtering logs
+
+---
+
+## Features
+
+- Structured log format
+- Log levels
+- Categories
+- Timestamped log entries
+- Demo log generation
+- GUI-based log analyzer
+- Level filtering
+- Text search
+- Date and time filtering
+
+---
+
 ## Requirements
 
-This project is currently built and tested on Windows using:
+This project is currently built and tested on Windows.
 
-- CMake 3.20 or newer
-- GCC / g++ with C++20 support
-- Ninja or MinGW Makefiles
-- Git
+Required tools:
+
+* CMake 3.20 or newer
+* A C++20 compatible compiler
+* Git
+* Qt 6 with the Widgets module, required for the log analyzer
 
 During initial development, the following versions were used:
 
-- CMake 3.31.2
-- g++ 15.2.0 from MSYS2
+* CMake 3.31.2
+* Qt 6.11.1
+* MinGW / g++ through the Qt toolchain
 
 ## Installing dependencies on Windows
 
@@ -20,65 +49,85 @@ CMake can be installed from the official CMake website or through Windows Packag
 
 Using winget:
 
-    winget install -e --id Kitware.CMake
+```
+winget install -e --id Kitware.CMake
+```
 
 After installation, verify that CMake is available:
 
-    cmake --version
+```
+cmake --version
+```
 
-### GCC / g++ through MSYS2
+### Qt
 
-Install MSYS2 from the official MSYS2 website.
+The log analyzer is built with Qt Widgets.
 
-After installation, open the MSYS2 UCRT64 terminal and install the GCC toolchain:
+Install Qt 6 using the Qt online installer and make sure to include a MinGW toolchain.
 
-    pacman -S --needed base-devel mingw-w64-ucrt-x86_64-toolchain
+During development, this project used:
 
-Verify that g++ is available:
+```
+C:\Qt\6.11.1\mingw_64
+```
 
-    g++ --version
+and the Qt MinGW compiler from:
 
-If `g++` is not available from PowerShell, make sure the MSYS2 UCRT64 `bin` directory is added to the Windows PATH.
-
-Example path:
-
-    C:\msys64\ucrt64\bin
+```
+C:\Qt\Tools\mingw1310_64\bin
+```
 
 ## Building the project
 
-From the project root:
+From the project root, configure the project with CMake.
 
-    cmake -S . -B build -G "Ninja"
-    cmake --build build
+Example using the Qt MinGW toolchain:
 
-Alternative using MinGW Makefiles:
+```
+cmake -S . -B build -G "MinGW Makefiles" ^
+  -DCMAKE_CXX_COMPILER="C:\Qt\Tools\mingw1310_64\bin\g++.exe" ^
+  -DCMAKE_MAKE_PROGRAM="C:\Qt\Tools\mingw1310_64\bin\mingw32-make.exe" ^
+  -DCMAKE_PREFIX_PATH="C:\Qt\6.11.1\mingw_64"
+```
 
-    cmake -S . -B build -G "MinGW Makefiles"
-    cmake --build build
+Then build:
+
+```
+cmake --build build
+```
 
 ## Running the demo application
 
-After building, run the demo application.
+After building, run the demo application:
 
-With Ninja or MinGW, the executable is usually located at:
+```
+.\build\demoApp\demoApp.exe
+```
 
-    .\build\demoApp\demoApp.exe
+The demo application creates a log file named:
 
-If the executable is not found, search for it:
-
-    Get-ChildItem -Recurse demoApp.exe
-
-The demo application should create a log file named:
-
-    demoLog.txt
+```
+demoLog.txt
+```
 
 The file is created in the current working directory when the program is run.
 
 To find the generated log file:
 
-    Get-ChildItem -Recurse demoLog.txt
+```
+Get-ChildItem -Recurse demoLog.txt
+```
 
 ## Running the log analyzer during development
 
+Before running the analyzer, make sure the Qt runtime DLLs are available in PATH:
+
+```
 $env:PATH = "C:\Qt\6.11.1\mingw_64\bin;$env:PATH"
+```
+
+Then run:
+
+```
 .\build\logAnalyzer\logAnalyzer.exe
+```
